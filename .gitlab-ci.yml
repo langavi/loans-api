@@ -1,0 +1,100 @@
+image: artifactstore.cloud.investments.momentum.co.za:5000/openjdk:8-apline-with-docker
+
+variables:
+  IMAGE_TAG: '$CI_PIPELINE_ID'
+
+stages:
+  - build
+  - dev
+  - tst
+  - prelive
+
+before_script:
+  - echo "$CI_JOB_NAME"
+
+BUILD:
+  stage: build
+  script:
+    - java -version
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - mkdir -p $GRADLE_USER_HOME
+    - chmod +x gradlew
+    - ./gradlew clean build
+    - echo "$(date '+%Y-%m-%d-%H-%M')_${CI_PIPELINE_ID}" > build.id
+  cache:
+    key: '$CI_JOB_NAME'
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+  artifacts:
+    paths:
+      - build.id
+      - build/reports
+  allow_failure: true
+
+
+API-Test-DEV:
+  stage: dev
+  when: manual
+  script:
+    - java -version
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - mkdir -p $GRADLE_USER_HOME
+    - chmod +x gradlew
+    - ./gradlew clean test
+    #    - ./gradlew test -Dspring.profiles.active=dev
+    - echo "$(date '+%Y-%m-%d-%H-%M')_${CI_PIPELINE_ID}" > build.id
+  cache:
+    key: '$CI_JOB_NAME'
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+  artifacts:
+    paths:
+      - build.id
+      - build/reports
+  allow_failure: true
+
+API-Test-TST:
+  stage: tst
+  when: manual
+  script:
+    - java -version
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - mkdir -p $GRADLE_USER_HOME
+    - chmod +x gradlew
+    - ./gradlew clean test
+    #    - ./gradlew test -Dspring.profiles.active=tst
+    - echo "$(date '+%Y-%m-%d-%H-%M')_${CI_PIPELINE_ID}" > build.id
+  cache:
+    key: '$CI_JOB_NAME'
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+  artifacts:
+    paths:
+      - build.id
+      - build/reports
+  allow_failure: true
+
+API-Test-PRE:
+  stage: prelive
+  when: manual
+  script:
+    - java -version
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - mkdir -p $GRADLE_USER_HOME
+    - chmod +x gradlew
+    - ./gradlew clean build
+    #    - ./gradlew test -Dspring.profiles.active=uat
+    - echo "$(date '+%Y-%m-%d-%H-%M')_${CI_PIPELINE_ID}" > build.id
+  cache:
+    key: '$CI_JOB_NAME'
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+  artifacts:
+    paths:
+      - build.id
+      - build/reports
+  allow_failure: false

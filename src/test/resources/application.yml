@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: rest-assured-demo
+    webflux:
+      static-path-pattern: "/**"
+    resources:
+      static-locations: "classpath:/public-web-resources/"
+  jackson:
+      serialization:
+        write-dates-as-timestamps: false
+        fail-on-empty-beans: false
+      date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+      default-property-inclusion: non_null
+
+swagger:
+  basePath: /
+  host: localhost:8080
+
+doc:
+  root-url: http://localhost:8080/swagger-ui.html
+
+
