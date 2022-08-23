@@ -27,7 +27,7 @@ public class LoanController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LoanApplicationResponse> applyForALoan(@RequestHeader(value = "Authorization") String jwt, @RequestBody LoanApplication loanApplication) {
         userService.validateToken(jwt);
-        LoanApplicationResponse response = loanService.applyForALoan(loanApplication);
+        LoanApplicationResponse response = loanService.apply(loanApplication);
         return new ResponseEntity<>(response, response.isApproved() ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY);
     }
 

@@ -1,8 +1,11 @@
 package za.co.loans.domain;
 
 public enum Banks {
-    SCRUM_BANK,
-    ICONIC_BANK,
-    MINIONS_BANK,
-    MOLEWA_BANK
+    ABSA,
+    CAPITEC,
+    FNB,
+    INVESTEC_LIMITED,
+    NEDBANK_LIMITED,
+    STANDARD_BANK,
+    VBS
 }

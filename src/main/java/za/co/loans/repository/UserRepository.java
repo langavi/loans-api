@@ -34,4 +34,12 @@ public class UserRepository {
         if (!CollectionUtils.isEmpty(users))
             users.clear();
     }
+
+    public void update(User user) {
+        if (!CollectionUtils.isEmpty(users) && users.containsKey(user.getEmailAddress())) {
+            users.replace(user.getEmailAddress(), user);
+        } else {
+            add(user);
+        }
+    }
 }

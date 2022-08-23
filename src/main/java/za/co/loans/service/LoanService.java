@@ -17,7 +17,7 @@ public class LoanService {
     private final LoanRepository repository;
     private final LoanApplicationValidation validation;
 
-    public LoanApplicationResponse applyForALoan(LoanApplication loanApplication) {
+    public LoanApplicationResponse apply(LoanApplication loanApplication) {
         ValidationResponse validationResponse = validation.validate(loanApplication);
         if (validationResponse.isSuccess()) {
             repository.add(loanApplication);

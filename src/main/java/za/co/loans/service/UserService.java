@@ -28,7 +28,7 @@ public class UserService {
     private final UserRepository repository;
 
     public ValidationResponse signUp(User user) {
-        if (Objects.nonNull(user) && StringUtils.isNotBlank(user.getEmailAddress()) && StringUtils.isNotBlank(user.getPassword())) {
+        if (isValidUser(user)) {
             repository.add(user);
             return ValidationResponse.builder()
                     .build();
@@ -37,6 +37,10 @@ public class UserService {
                     .errors(Collections.singletonList("E-mail address and password are required"))
                     .build();
         }
+    }
+
+    private boolean isValidUser(User user) {
+        return Objects.nonNull(user) && StringUtils.isNotBlank(user.getEmailAddress()) && StringUtils.isNotBlank(user.getPassword());
     }
 
     public Token signIn(User user) {
@@ -51,6 +55,19 @@ public class UserService {
         } else {
             throw new UnauthorisedUserException("Invalid user");
         }
+    }
+
+    public ValidationResponse update(User user) {
+        if (isValidUser(user)) {
+            repository.update(user);
+            return ValidationResponse.builder()
+                    .build();
+        } else {
+            return ValidationResponse.builder()
+                    .errors(Collections.singletonList("E-mail address and password are required"))
+                    .build();
+        }
+
     }
 
     public ValidationResponse deleteAll() {

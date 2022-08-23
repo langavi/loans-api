@@ -41,4 +41,11 @@ public class UserController {
         userService.validateToken(jwt);
         return userService.deleteAll();
     }
+
+    @ApiOperation(value = "Updates an existing user",
+            notes = "Updates an existing user on Enviro Bank Limited application")
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ValidationResponse update(@RequestBody User user) {
+        return userService.update(user);
+    }
 }

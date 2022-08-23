@@ -10,35 +10,19 @@ import za.co.loans.service.utils.IdNumberUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import java.util.Objects;
 
 @Component
 public class LoanApplicationValidation {
 
     public ValidationResponse validate(LoanApplication loanApplication) {
-
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
 
+        validateFirstName(errors, loanApplication.getFirstName());
+        validateLastName(errors, loanApplication.getLastName());
         validateIdNumber(loanApplication.getIdNumber(), errors);
-
         validateBankAccount(loanApplication, errors, warnings);
-
-        if (isNull(loanApplication.getFirstName()) || loanApplication.getFirstName().isEmpty()) {
-            errors.add("Name is required");
-        }
-        if (isNull(loanApplication.getLastName()) || loanApplication.getLastName().isEmpty()) {
-            errors.add("Surname is required");
-        }
-
-        if (!StringUtils.isAlpha(loanApplication.getFirstName())) {
-            errors.add("Name must not have any special characters and digits");
-        }
-        if (!StringUtils.isAlpha(loanApplication.getLastName())) {
-            errors.add("Surname must not have any special characters and digits");
-        }
 
         return ValidationResponse.builder()
                 .errors(errors)
@@ -46,20 +30,36 @@ public class LoanApplicationValidation {
                 .build();
     }
 
+    private void validateLastName(List<String> errors, String lastName) {
+        if (StringUtils.isBlank(lastName)) {
+            errors.add("Last name is required");
+        } else if (!StringUtils.isAlpha(lastName)) {
+            errors.add("Last name must not contain any special characters and/or digits");
+        }
+    }
+
+    private void validateFirstName(List<String> errors, String firstName) {
+        if (StringUtils.isBlank(firstName)) {
+            errors.add("First name is required");
+        } else if (!StringUtils.isAlpha(firstName)) {
+            errors.add("First name must not contain any special characters and/or digits");
+        }
+    }
+
     private void validateBankAccount(LoanApplication loanApplication, List<String> errors, List<String> warnings) {
-        if (nonNull(loanApplication.getBankAccount()) && nonNull(loanApplication.getBankAccount().getAccountNumber())
+        if (Objects.nonNull(loanApplication.getBankAccount()) && Objects.nonNull(loanApplication.getBankAccount().getAccountNumber())
                 && loanApplication.getBankAccount().getAccountNumber().trim().length() != 10) {
             errors.add("Bank account number must be 10 digits");
         }
 
-        if (nonNull(loanApplication.getBankAccount()) && nonNull(loanApplication.getBankAccount().getBankName())
-                && loanApplication.getBankAccount().getBankName().equals(Banks.MOLEWA_BANK)) {
+        if (Objects.nonNull(loanApplication.getBankAccount()) && Objects.nonNull(loanApplication.getBankAccount().getBankName())
+                && Objects.equals(loanApplication.getBankAccount().getBankName(), Banks.VBS)) {
             warnings.add("Refer to compliance");
         }
     }
 
     private void validateIdNumber(String idNumber, List<String> errors) {
-        if (nonNull(idNumber) && idNumber.trim().length() != 13) {
+        if (Objects.nonNull(idNumber) && idNumber.trim().length() != 13) {
             errors.add("ID Number must be a valid South African ID number (13 digits)");
         } else if (IdNumberUtils.INSTANCE.getAge(idNumber).isLessThan(Years.years(18))) {
             errors.add("The client must be 18 years or older");
