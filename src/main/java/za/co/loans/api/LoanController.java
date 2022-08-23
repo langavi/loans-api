@@ -11,6 +11,7 @@ import za.co.loans.domain.LoanApplication;
 import za.co.loans.domain.LoanApplicationResponse;
 import za.co.loans.domain.ValidationResponse;
 import za.co.loans.service.LoanService;
+import za.co.loans.service.UserService;
 
 @Api(tags = "Loans")
 @RestController
@@ -19,17 +20,15 @@ import za.co.loans.service.LoanService;
 public class LoanController {
 
     private final LoanService loanService;
+    private final UserService userService;
 
     @ApiOperation(value = "Apply for a loan",
             notes = "One loan application request supported in the body.")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LoanApplicationResponse> applyForALoan(@RequestHeader(value = "Authorization") String accessToken, @RequestBody LoanApplication loanApplication) {
+    public ResponseEntity<LoanApplicationResponse> applyForALoan(@RequestHeader(value = "Authorization") String jwt, @RequestBody LoanApplication loanApplication) {
+        userService.validateToken(jwt);
         LoanApplicationResponse response = loanService.applyForALoan(loanApplication);
-        if (!response.isApproved()) {
-            return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
+        return new ResponseEntity<>(response, response.isApproved() ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ApiOperation(value = "Removes all loan applications",

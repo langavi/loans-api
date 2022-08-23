@@ -14,7 +14,7 @@ public class ValidationResponse {
     List<String> errors;
     List<String> warnings;
 
-    public boolean isValid() {
+    public boolean isSuccess() {
         return isNull(errors) || errors.isEmpty();
     }
 }

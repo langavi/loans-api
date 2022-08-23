@@ -19,7 +19,7 @@ public class LoanService {
 
     public LoanApplicationResponse applyForALoan(LoanApplication loanApplication) {
         ValidationResponse validationResponse = validation.validate(loanApplication);
-        if (validationResponse.isValid()) {
+        if (validationResponse.isSuccess()) {
             repository.add(loanApplication);
         }
         return LoanApplicationResponse.builder()

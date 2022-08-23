@@ -3,7 +3,6 @@ package za.co.loans.repository;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import za.co.loans.domain.LoanApplication;
-import za.co.loans.domain.user.User;
 
 import java.util.HashMap;
 import java.util.Map;

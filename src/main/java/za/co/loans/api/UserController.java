@@ -37,7 +37,8 @@ public class UserController {
     @ApiOperation(value = "Removes all users",
             notes = "Removes all users on Enviro Bank Limited application")
     @DeleteMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ValidationResponse deleteAll(@RequestHeader(value = "Authorization") String accessToken) {
+    public ValidationResponse deleteAll(@RequestHeader(value = "Authorization") String jwt) {
+        userService.validateToken(jwt);
         return userService.deleteAll();
     }
 }

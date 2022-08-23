@@ -1,10 +1,15 @@
 package za.co.loans.service;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import za.co.loans.domain.ValidationResponse;
+import za.co.loans.domain.exception.InvalidJwtException;
 import za.co.loans.domain.exception.UnauthorisedUserException;
 import za.co.loans.domain.user.Token;
 import za.co.loans.domain.user.User;
@@ -15,6 +20,7 @@ import java.util.Objects;
 
 import static za.co.loans.service.utils.JwtUtils.JWT_KEY;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -50,5 +56,23 @@ public class UserService {
     public ValidationResponse deleteAll() {
         repository.deleteAll();
         return ValidationResponse.builder().build();
+    }
+
+    public void validateToken(String jwt) {
+        if (StringUtils.isBlank(jwt)) {
+            throw new InvalidJwtException(String.format("Invalid JWT %s", jwt));
+        }
+        try {
+            Jws<Claims> jwtClaims = Jwts.parserBuilder()
+                    .setSigningKey(JWT_KEY)
+                    .build()
+                    .parseClaimsJws(jwt
+                            .replace("Bearer ", "")
+                            .replace("Bearer", ""));
+            log.info("JWT claims {}", jwtClaims);
+            //OK, we can trust this JWT
+        } catch (JwtException e) {
+            throw new InvalidJwtException(e);
+        }
     }
 }
